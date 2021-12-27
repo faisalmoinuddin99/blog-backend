@@ -6,6 +6,9 @@ import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PostServiceImpl implements PostService {
 
@@ -23,20 +26,38 @@ public class PostServiceImpl implements PostService {
     public PostDTO createPost(PostDTO postDTO) {
 
         // convert DTO to Model
+        Post post = mappedToModel(postDTO) ;
+        Post newPost = postRepository.save(post) ;
+        // convert model to DTO
+        return mappedToDTO(newPost);
+    }
+
+    @Override
+    public List<PostDTO> getAllPosts() {
+
+        List<Post> posts = postRepository.findAll() ;
+        return posts.stream()
+                .map(post -> mappedToDTO(post))
+                .collect(Collectors.toList()) ;
+    }
+
+    // convert Model into DTO
+    private  PostDTO mappedToDTO(Post post){
+        PostDTO postDTO = new PostDTO() ;
+        postDTO.setId(post.getId());
+        postDTO.setTitle(post.getTitle());
+        postDTO.setDescription(post.getDescription());
+        postDTO.setContent(post.getContent());
+
+        return postDTO ;
+    }
+    // convert DTO to Model
+    private Post mappedToModel(PostDTO postDTO) {
         Post post = new Post() ;
         post.setTitle(postDTO.getTitle());
         post.setDescription(postDTO.getDescription());
         post.setContent(postDTO.getContent());
 
-        Post newPost = postRepository.save(post) ;
-
-        // convert model to DTO
-        PostDTO postResponse  = new PostDTO() ;
-        postResponse.setId(newPost.getId());
-        postResponse.setTitle(newPost.getTitle());
-        postResponse.setDescription(newPost.getDescription());
-        postResponse.setContent(newPost.getContent());
-
-        return postResponse;
+        return post ;
     }
 }
