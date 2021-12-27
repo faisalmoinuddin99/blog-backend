@@ -1,5 +1,6 @@
 package com.springboot.blog.service.Impl;
 
+import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.model.Post;
 import com.springboot.blog.payload.PostDTO;
 import com.springboot.blog.repository.PostRepository;
@@ -39,6 +40,15 @@ public class PostServiceImpl implements PostService {
         return posts.stream()
                 .map(post -> mappedToDTO(post))
                 .collect(Collectors.toList()) ;
+    }
+
+    @Override
+    public PostDTO getPostById(long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Post", "id", id)
+                ) ;
+        return mappedToDTO(post) ;
     }
 
     // convert Model into DTO
