@@ -5,6 +5,9 @@ import com.springboot.blog.model.Post;
 import com.springboot.blog.payload.PostDTO;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,10 +37,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDTO> getAllPosts() {
+    public List<PostDTO> getAllPosts(int pageNo, int pageSize) {
 
-        List<Post> posts = postRepository.findAll() ;
-        return posts.stream()
+        // create Pageable instance
+        Pageable pageable = PageRequest.of(pageNo,pageSize) ;
+
+        Page<Post> posts = postRepository.findAll(pageable) ;
+
+        // get content for page object
+        List<Post> listOfPosts = posts.getContent() ;
+
+        return listOfPosts.stream()
                 .map(post -> mappedToDTO(post))
                 .collect(Collectors.toList()) ;
     }
