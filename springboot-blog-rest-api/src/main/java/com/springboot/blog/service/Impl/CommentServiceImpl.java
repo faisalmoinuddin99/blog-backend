@@ -1,5 +1,6 @@
 package com.springboot.blog.service.Impl;
 
+import com.springboot.blog.exception.BlogAPIException;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.model.Comment;
 import com.springboot.blog.model.Post;
@@ -8,6 +9,7 @@ import com.springboot.blog.repository.CommentRepository;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = mapToModel(commentDTO) ;
 
-        // Retrieve post mode by id
+        // Retrieve post model by id
         Post post = postRepository.findById(postId).orElseThrow(
                 ()-> new ResourceNotFoundException("Post", "id", postId)
         );
@@ -49,6 +51,23 @@ public class CommentServiceImpl implements CommentService {
 
         // convert list of comment model to list of comment dto's
         return comments.stream().map(comment -> mapToDTO(comment)).collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDTO getCommentById(long postId, long commentId) {
+        // Retrieve post model by id
+        Post post = postRepository.findById(postId).orElseThrow(
+                ()-> new ResourceNotFoundException("Post", "id", postId)
+        );
+
+        // Retrieve comment model by id
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new ResourceNotFoundException("Comment", "id", commentId)
+        );
+        if (!comment.getPost().getId().equals(post.getId())){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post") ;
+        }
+        return mapToDTO(comment) ;
     }
 
     private CommentDTO mapToDTO(Comment comment){
