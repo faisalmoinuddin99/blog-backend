@@ -8,6 +8,7 @@ import com.springboot.blog.payload.CommentDTO;
 import com.springboot.blog.repository.CommentRepository;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.CommentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     PostRepository postRepository ;
+
+    @Autowired
+    ModelMapper mapper ;
 
     @Override
     public CommentDTO createComment(long postId, CommentDTO commentDTO) {
@@ -111,21 +115,30 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentDTO mapToDTO(Comment comment){
+
+        CommentDTO commentDTO = mapper.map(comment, CommentDTO.class) ;
+      /*
         CommentDTO commentDTO = new CommentDTO() ;
         commentDTO.setId(comment.getId());
         commentDTO.setName(comment.getName());
         commentDTO.setEmail(comment.getEmail());
         commentDTO.setBody(comment.getBody());
 
+       */
+
         return commentDTO ;
     }
     private Comment mapToModel(CommentDTO commentDTO){
+
+        Comment comment = mapper.map(commentDTO, Comment.class) ;
+
+        /*
         Comment comment = new Comment() ;
         comment.setId(commentDTO.getId());
         comment.setName(commentDTO.getName());
         comment.setEmail(commentDTO.getEmail());
         comment.setBody(commentDTO.getBody());
-
+         */
         return comment ;
     }
 }
