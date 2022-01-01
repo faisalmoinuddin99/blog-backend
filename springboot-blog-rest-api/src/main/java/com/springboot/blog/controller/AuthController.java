@@ -2,10 +2,12 @@ package com.springboot.blog.controller;
 
 import com.springboot.blog.model.Role;
 import com.springboot.blog.model.User;
+import com.springboot.blog.payload.JWTAuthResponse;
 import com.springboot.blog.payload.LoginDTO;
 import com.springboot.blog.payload.RegisterDTO;
 import com.springboot.blog.repository.RoleRepository;
 import com.springboot.blog.repository.UserRepository;
+import com.springboot.blog.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,13 +36,20 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder ;
 
+    @Autowired
+    private JwtTokenProvider tokenProvider ;
+
+
     @PostMapping("/login")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<JWTAuthResponse> authenticateUser(@RequestBody LoginDTO loginDTO) {
    Authentication authentication =  authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsernameOrEmail(), loginDTO.getPassword())
         );
    SecurityContextHolder.getContext().setAuthentication(authentication);
-   return new ResponseEntity<>("Login successfully", HttpStatus.OK) ;
+
+   // get token from token provider class
+        String token = tokenProvider.generateToken(authentication) ;
+   return ResponseEntity.ok(new JWTAuthResponse(token)) ;
     }
 
     @PostMapping("/register")
