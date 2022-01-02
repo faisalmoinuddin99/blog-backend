@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api/v1/posts")
 public class PostController {
 
     @Autowired
@@ -39,7 +39,7 @@ public class PostController {
     ){
        return postService.getAllPosts(pageNo,pageSize,sortBy,sortDir) ;
     }
-    @GetMapping(value = "/{id}", produces = "application/vnd.javaguides.v1+json")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<PostDTO> getPostById(@PathVariable(name = "id")long id){
         return ResponseEntity.ok(postService.getPostById(id)) ;
     }
