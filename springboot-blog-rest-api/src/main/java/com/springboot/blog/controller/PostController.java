@@ -39,7 +39,7 @@ public class PostController {
     ){
        return postService.getAllPosts(pageNo,pageSize,sortBy,sortDir) ;
     }
-    @GetMapping(value = "/{id}", headers = "X-API-VERSION=1")
+    @GetMapping(value = "/{id}", produces = "application/vnd.javaguides.v1+json")
     public ResponseEntity<PostDTO> getPostById(@PathVariable(name = "id")long id){
         return ResponseEntity.ok(postService.getPostById(id)) ;
     }
