@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List ;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -40,7 +39,7 @@ public class PostController {
     ){
        return postService.getAllPosts(pageNo,pageSize,sortBy,sortDir) ;
     }
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", headers = "X-API-VERSION=1")
     public ResponseEntity<PostDTO> getPostById(@PathVariable(name = "id")long id){
         return ResponseEntity.ok(postService.getPostById(id)) ;
     }
